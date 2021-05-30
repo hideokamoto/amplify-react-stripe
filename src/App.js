@@ -1,9 +1,13 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Container } from 'reactstrap';
 import { Products } from './Products';
 
 function App() {
   return (
     <div className="App">
-      <Products />
+      <Container>
+        <Products />
+      </Container>
     </div>
   );
 }
