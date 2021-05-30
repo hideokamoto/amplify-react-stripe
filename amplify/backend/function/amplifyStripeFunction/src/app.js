@@ -54,10 +54,31 @@ app.get('/products', async function(req, res) {
 * Example post method *
 ****************************/
 
-app.post('/products/:price_id/checkout', function(req, res) {
+app.post('/products/:price_id/checkout', async function(req, res) {
+  const priceId = req.params.price_id;
+  const appUrl = req.headers.origin;
+  const mode = req.body.type === 'recurring' ? 'subscription': 'payment'
+
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  const paymentIntentData = mode === 'payment' ? {
+    setup_future_usage: 'on_session'
+  }: undefined
+  const session = await stripe.checkout.sessions.create({
+    mode,
+    payment_method_types: ['card'],
+    line_items: [{
+      price: priceId,
+      quantity: 1
+    }],
+    cancel_url: `${appUrl}/cancel`,
+    success_url: `${appUrl}/successs`,
+    customer: 'cus_JZvoZtiQDch2b8',
+    payment_intent_data: paymentIntentData
+  })
+  // TODO implement
+  console.log(session)
   // Add your code here
-  res.json({success: 'post call succeed!', url: req.url, body: req.body})
+  res.json(session);
 });
 
 
