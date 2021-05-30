@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
 import {API} from 'aws-amplify'
 import { Card,  CardBody, CardTitle, CardText, Row, Col, Table, Badge, CardImg } from 'reactstrap';
-
-function BuyButton() {
-    return <button>Buy</button>
-}
-
+import { BuyButton } from './BuyButton';
 
 /**
  * 商品価格表 
