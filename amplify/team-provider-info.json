@@ -10,6 +10,14 @@
       "StackName": "amplify-amplifyreactstripe-dev-223707",
       "StackId": "arn:aws:cloudformation:ap-northeast-1:372284591230:stack/amplify-amplifyreactstripe-dev-223707/22632410-c14c-11eb-ad92-0e754094fda1",
       "AmplifyAppId": "d2odvnbswh7ocf"
+    },
+    "categories": {
+      "function": {
+        "amplifyStripeFunction": {
+          "deploymentBucketName": "amplify-amplifyreactstripe-dev-223707-deployment",
+          "s3Key": "amplify-builds/amplifyStripeFunction-2b577453784c4e563961-build.zip"
+        }
+      }
     }
   }
 }
