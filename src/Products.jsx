@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {API} from 'aws-amplify'
-import { Card,  CardBody, CardTitle, CardText, Row, Col, Table, Badge } from 'reactstrap';
+import { Card,  CardBody, CardTitle, CardText, Row, Col, Table, Badge, CardImg } from 'reactstrap';
 
 function BuyButton() {
     return <button>Buy</button>
@@ -54,6 +54,19 @@ export function ProductPrice({product}) {
 /**
  * サムネイル画像 
  */
+export function ProductThumbnail({product}) {
+    const thumbnail = product && product.images ? product.images[0]: null
+    if (!thumbnail) return null;
+    return (
+        <Col>
+          <CardImg top width="100%" src={thumbnail} alt={product.caption} />
+        </Col>
+    )
+}
+
+/**
+ * 商品メタ情報 
+ */
 export function ProductMetadata({product}) {
     if (!product.metadata) return null;
     return (
@@ -81,6 +94,7 @@ export function Product({product}) {
               <CardText>{product.description}</CardText>
               <ProductMetadata product={product} />
             </Col>
+            <ProductThumbnail product={product} />
           </Row>
             <Row>
                 <Col>
