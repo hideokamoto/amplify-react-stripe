@@ -12,6 +12,7 @@ See the License for the specific language governing permissions and limitations 
 const express = require('express')
 const bodyParser = require('body-parser')
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
+const Stripe = require('stripe')
 
 // declare a new express app
 const app = express()
@@ -27,12 +28,26 @@ app.use(function(req, res, next) {
 
 
 /**********************
- * Example get method *
+ * List Stripe products *
  **********************/
-
-app.get('/products', function(req, res) {
+app.get('/products', async function(req, res) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  const products = await stripe.products.list()
+  if (!products || !products.data) {
+      res.json([]);
+      return;
+  }
+  const response = await Promise.all(
+    products.data.map(async product => {
+      const prices = await stripe.prices.list({
+          product: product.id
+      })
+      product.prices = prices.data
+      return product
+    })
+  );
   // Add your code here
-  res.json({success: 'get call succeed!', url: req.url});
+  res.json(response);
 });
 
 /****************************
@@ -40,6 +55,7 @@ app.get('/products', function(req, res) {
 ****************************/
 
 app.post('/products/:price_id/checkout', function(req, res) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   // Add your code here
   res.json({success: 'post call succeed!', url: req.url, body: req.body})
 });
