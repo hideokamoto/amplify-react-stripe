@@ -119,7 +119,7 @@ export function Products() {
       })
   }, [])
   return (
-    <Row md="2">
+    <Row lg="2">
         {products.map(product => (
           <Col key={product.id}>
               <Product product={product} />
