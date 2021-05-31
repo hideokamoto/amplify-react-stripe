@@ -201,10 +201,17 @@ Resources:
           Name: email
           Required: true
           Mutable: true
+        # 間違えて作ったやつ
         - 
           Name: stripeCustomerId
           Required: false
           Mutable: false
+          AttributeDataType: String
+        # こっちを使う 
+        - 
+          Name: StripeCustomerId
+          Required: false
+          Mutable: true
           AttributeDataType: String
         
       

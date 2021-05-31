@@ -4,11 +4,22 @@ import {loadStripe} from '@stripe/stripe-js';
 
 
 const redirectToStripeCheckout = async (priceId, type) => {
+    const user = await Auth.currentAuthenticatedUser()
+    const customerId = user.attributes['custom:StripeCustomerId'] || null;
+
     const checkout = await API.post('stripeapi', `/products/${priceId}/checkout`, {
         body: {
-            type
+            type,
+            customer_id: customerId
         }
     })
+    if (!customerId || customerId !== checkout.customer_id) {
+        await Auth.updateUserAttributes(user, {
+            'custom:StripeCustomerId': checkout.customer_id
+        })
+    }
+
+
     const stripe = await loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY)
     const result = await stripe.redirectToCheckout({ sessionId: checkout.session.id })
     if (result.error) throw new Error(result.error.message)
