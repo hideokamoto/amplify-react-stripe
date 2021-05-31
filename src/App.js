@@ -1,5 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Alert, Container, Navbar, NavbarBrand } from 'reactstrap';
+import { Alert, Container, Nav, Navbar, NavbarBrand, NavItem } from 'reactstrap';
+import { withAuthenticator } from '@aws-amplify/ui-react'
+import { Auth } from 'aws-amplify'
 import {
   BrowserRouter as Router,
   Switch,
@@ -23,6 +25,14 @@ function App() {
       <Navbar expand color="light">
         <Container>
           <NavbarBrand href="/">Stripe Example app</NavbarBrand>
+          <Nav navbar>
+            <NavItem onClick={() => {
+              Auth.signOut()
+              window.location.reload()
+            }} style={{cursor: 'pointer'}}>
+              Logout
+            </NavItem>
+          </Nav>
         </Container>
       </Navbar>
       <Container>
@@ -49,4 +59,4 @@ function App() {
   );
 }
 
-export default App;
+export default withAuthenticator(App);

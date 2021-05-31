@@ -54,13 +54,26 @@ app.get('/products', async function(req, res) {
 * Example post method *
 ****************************/
 
+const createCustomerIfExists = async (customerId = null) => {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  if ( customerId ) {
+    const existsCustomer = await stripe.customers.retrieve(customerId)
+    if (existsCustomer.deleted !== true) return existsCustomer
+  }
+  const newCustomer = await stripe.customers.create()
+  return newCustomer
+}
+
 app.post('/products/:price_id/checkout', async function(req, res) {
   const priceId = req.params.price_id;
   const appUrl = req.headers.origin;
   const mode = req.body.type === 'recurring' ? 'subscription': 'payment'
 
+  const customer = await createCustomerIfExists(req.body.customer_id)
+  const customerId = customer.id || null;
+
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-  const session = await stripe.checkout.sessions.create({
+  const checkoutSessionProps = {
     mode,
     payment_method_types: ['card'],
     line_items: [{
@@ -69,9 +82,20 @@ app.post('/products/:price_id/checkout', async function(req, res) {
     }],
     cancel_url: `${appUrl}/cancel`,
     success_url: `${appUrl}/success`,
-  })
+  }
+  if (customerId) {
+    checkoutSessionProps['customer'] = customerId
+    const paymentIntentData = mode === 'payment' ? {
+      setup_future_usage: 'on_session'
+    }: undefined
+    if (paymentIntentData) checkoutSessionProps['payment_intent_data'] = paymentIntentData
+  }
+  const session = await stripe.checkout.sessions.create(checkoutSessionProps)
   // Add your code here
-  res.json(session);
+  res.json({
+    customer_id: customerId,
+    session
+  });
 });
 
 
