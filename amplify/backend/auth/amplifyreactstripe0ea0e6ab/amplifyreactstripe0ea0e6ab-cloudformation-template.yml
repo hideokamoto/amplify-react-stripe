@@ -193,16 +193,19 @@ Resources:
     Properties:
       UserPoolName: !If [ShouldNotCreateEnvResources, !Ref userPoolName, !Join ['',[!Ref userPoolName, '-', !Ref env]]]
       
-      
       UsernameConfiguration:
         CaseSensitive: false
       
       Schema:
-        
         -
           Name: email
           Required: true
           Mutable: true
+        - 
+          Name: stripeCustomerId
+          Required: false
+          Mutable: false
+          AttributeDataType: String
         
       
       
